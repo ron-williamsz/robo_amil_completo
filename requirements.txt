@@ -1,0 +1,15 @@
+# Start of Selection
+flask
+selenium
+pyperclip
+webdriver_manager
+dotenv
+requests
+streamlit
+subprocess
+smtplib
+email
+glob
+shutil
+logging
+# End of Selection
