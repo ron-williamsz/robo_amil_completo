@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, send_from_directory
+from flask import Flask, render_template, url_for, send_from_directory, send_file, Response
 import subprocess
 import signal
 import os
@@ -59,6 +59,14 @@ def recarregar():
 @app.route('/test_image')
 def test_image():
     return send_from_directory(app.static_folder, 'amil.png')
+
+@app.route('/output.log')
+def output_log():
+    def generate():
+        with open('output.log', 'r') as file:
+            for line in file:
+                yield line
+    return Response(generate(), mimetype='text/plain')
 
 if __name__ == '__main__':
     print(f"Caminho da pasta static: {app.static_folder}")
