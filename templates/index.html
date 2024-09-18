@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle do Robô</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            width: 90%;
+            max-width: 851px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .menu-icon {
+            cursor: pointer;
+            font-size: 24px;
+            color: #8a1d22;
+        }
+        .menu {
+            display: none;
+            position: absolute;
+            background-color: #f1f1f1;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 5px;
+        }
+        .menu a {
+            color: #120f0f;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        .menu a:hover {
+            background-color: #ddd;
+        }
+        .log-window {
+            width: 100%;
+            height: 100px;
+            border: 1px solid #ccc;
+            overflow-y: scroll;
+            margin-top: 20px;
+            padding: 10px;
+            text-align: left;
+            font-size: 14px;
+        }
+        button {
+            background-color: #8a1d22;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #da1c24;
+        }
+        img {
+            width: 100%;
+            max-width: 851px;
+            height: auto;
+            margin-bottom: 20px;
+            border-radius: 3%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
+            <button onclick="executarRobo()">Rodar Robô</button>
+        </div>
+        <div id="menu" class="menu">
+            <a href="#" onclick="recarregar()">Renovar Senhas</a>
+            <a href="#" onclick="pararRobo()">Parar Robô</a>
+            <a href="#" onclick="pausarRobo()">Pausar Robô</a>
+            <a href="#" onclick="retomarRobo()">Retomar Robô</a>
+            <a href="#" onclick="executarMod()">Elimina Duplicados</a>
+        </div>
+        <div class="img">
+            <img src="{{ url_for('static', filename='amil.png') }}" alt="Imagem Amil">
+        </div>
+        
+        <div class="log-window" id="logWindow">
+        <script>
+            function exibirLog() {
+                fetch('/output.log')
+                    .then(response => response.text())
+                    .then(data => {
+                        document.getElementById('logWindow').innerHTML = data.replace(/\n/g, '<br>');
+                    })
+                    .catch(error => {
+                        document.getElementById('logWindow').innerHTML += 'Erro ao carregar o log: ' + error + '<br>';
+                    });
+            }
+
+            // Chama a função para exibir o log ao carregar a página
+            window.onload = exibirLog;
+        </script>
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            var menu = document.getElementById("menu");
+            if (menu.style.display === "block") {
+                menu.style.display = "none";
+            } else {
+                menu.style.display = "block";
+            }
+        }
+
+        function executarRobo() {
+            fetch('/executar_robo')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('logWindow').innerHTML += data + '<br>';
+                });
+        }
+
+        function recarregar() {
+            fetch('/recarregar')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('logWindow').innerHTML += data + '<br>';
+                });
+        }
+
+        function pararRobo() {
+            fetch('/parar_robo')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('logWindow').innerHTML += data + '<br>';
+                });
+        }
+
+        function pausarRobo() {
+            fetch('/pausar_robo')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('logWindow').innerHTML += data + '<br>';
+                });
+        }
+
+        function retomarRobo() {
+            fetch('/retomar_robo')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('logWindow').innerHTML += data + '<br>';
+                });
+        }
+
+        function executarMod() {
+            fetch('/executar_mod')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('logWindow').innerHTML += data + '<br>';
+                });
+        }
+
+        function atualizarLog() {
+            fetch('/output.log')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro ao carregar o log: URL não encontrada.');
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    document.getElementById('logWindow').innerHTML = data.replace(/\n/g, '<br>');
+                })
+                .catch(error => {
+                    document.getElementById('logWindow').innerHTML += error.message + '<br>';
+                });
+        }
+        
+         // Atualiza o log a cada 2 segundos
+         setInterval(atualizarLog, 2000);
+
+        // Atualiza o log ao clicar em qualquer botão
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', atualizarLog);
+        });
+    </script>
+</body>
+</html>
